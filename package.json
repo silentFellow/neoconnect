@@ -12,11 +12,15 @@
     "@clerk/nextjs": "^5.3.3",
     "@clerk/themes": "^2.1.21",
     "@uploadthing/react": "^6.7.2",
+    "class-variance-authority": "^0.7.0",
+    "clsx": "^2.1.1",
+    "lucide-react": "^0.435.0",
     "mongoose": "^8.5.3",
     "next": "14.2.6",
     "react": "^18",
     "react-dom": "^18",
     "svix": "^1.30.0",
+    "tailwind-merge": "^2.5.2",
     "uploadthing": "^6.13.2"
   },
   "devDependencies": {

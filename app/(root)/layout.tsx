@@ -20,14 +20,14 @@ export default function RootLayout({
   return (
     <ClerkProvider>
       <html lang='en'>
-        <body className={`${inter.className} bg-dark-1`}>
+        <body className={`${inter.className}`}>
           <Topbar />
 
-          <main>
+          <main className="flex">
             <Leftsidebar />
 
             <section className="main-container">
-              <div className="w-full max-2-4xl">
+              <div className="w-full max-w-4xl">
                 {children}
               </div>
             </section>
