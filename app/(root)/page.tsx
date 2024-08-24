@@ -1,9 +1,14 @@
-import type { NextPage } from 'next';
+import { fetchThreads } from "@/lib/actions/thread.action";
 
-const Home: NextPage = () => {
+const page = async () => {
+  const posts = await fetchThreads({ pageNumber: 1, pageSize: 15 });
+  console.log(posts)
+
   return (
-    <div className='text-white'>Home</div>
+    <div>
+      hi
+    </div>
   )
 }
 
-export default Home;
+export default page;

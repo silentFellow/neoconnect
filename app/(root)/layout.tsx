@@ -6,7 +6,7 @@ import { ClerkProvider } from '@clerk/nextjs'
 import { Topbar, Bottombar, Leftsidebar, Rightsidebar } from "@/components/shared";
 
 export const metadata: Metadata = {
-  title: 'neoconnect',
+  title: 'Neoconnect',
   description: 'neoconnect is a web forum powered by nextjs'
 }
 

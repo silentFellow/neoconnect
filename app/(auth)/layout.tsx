@@ -5,7 +5,7 @@ import "../globals.css";
 import { ClerkProvider } from '@clerk/nextjs'
 
 export const metadata: Metadata = {
-  title: 'neoconnect auth',
+  title: 'Neoconnect Auth',
   description: 'neoconnect is a web forum powered by nextjs'
 }
 
