@@ -6,7 +6,7 @@ const threadValidation = z.object({
 })
 
 const commentValidation = z.object({
-  thread: z.string().min(3, 'Your comment must be at least 3 characters long'),
+  thread: z.string().min(1, "Cannot be empty")
 })
 
 export {

@@ -51,7 +51,7 @@ const fetchThreads = async ({
     const skipable = (pageNumber - 1) * pageSize;
 
     // post query with pagination
-    const postQuery = Thread.find({ parent_id: { $in: [null, undefined] } })
+    const postQuery = Thread.find({ parentId: { $in: [null, undefined] } })
       .skip(skipable)
       .limit(pageSize)
       .populate({
@@ -70,16 +70,79 @@ const fetchThreads = async ({
     const posts = await postQuery.exec();
 
     // check if next page is available
-    const totalPosts = await Thread.countDocuments({ parent_id: { $in: [null, undefined] } });
+    const totalPosts = await Thread.countDocuments({ parentId: { $in: [null, undefined] } });
     const hasNext = totalPosts > (skipable + posts.length);
 
     return { posts, hasNext };
   } catch (error: any) {
-  throw new Error(`Failed to fetch posts: ${error.message}`);
-}
+    throw new Error(`Failed to fetch posts: ${error.message}`);
+  }
 };
+
+const fetchThreadById = async (id: string) => {
+  try {
+    connectToDb();
+
+    const thread = await Thread.findById(id)
+      .populate({
+        path: "author",
+        model: User,
+        select: "_id id name image"
+      })
+      .populate({
+        path: "children",
+        populate: [
+          {
+            path: "author",
+            model: User,
+            select: "_id id parentId name image"
+          },
+          {
+            path: "children",
+            model: Thread,
+            populate: {
+              path: "author",
+              model: User,
+              select: "_id id parentId name image"
+            }
+          }
+        ]
+      }).exec();
+
+    return thread;
+  } catch(error: any) {
+    console.log(`Failed to fetch thread: ${error.message}`)
+    return null;
+  }
+}
+
+const addComment = async ({ threadId, currentUserId, text, path }: { threadId: string, currentUserId: string, text: string, path: string }) => {
+  try {
+    const originalThread = await Thread.findById(threadId);
+    if(!originalThread) {
+      throw new Error("Thread not found");
+    }
+
+    const comment = await Thread.create({
+      text,
+      author: currentUserId,
+      parentId: threadId
+    })
+
+    originalThread.children.push(comment._id);
+    await originalThread.save();
+
+    revalidatePath(path);
+  } catch(error: any) {
+    console.log(`Failed to add comment: ${error.message}`)
+  }
+
+
+}
 
 export {
   createThread,
-  fetchThreads
+  fetchThreads,
+  fetchThreadById,
+  addComment
 };

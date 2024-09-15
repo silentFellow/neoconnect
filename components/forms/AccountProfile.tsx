@@ -71,6 +71,7 @@ const AccountProfile = ({ user, btnTitle }: Props) => {
 
     if(hasChanged) {
       const imageRes = await startUpload(files)
+      console.log(imageRes)
       if(imageRes && imageRes[0].fileUrl) {
         values.profile_photo = imageRes[0].fileUrl
       }

@@ -4,22 +4,22 @@ import { sidebarLinks } from "@/constants";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
-import { SignedIn, SignOutButton } from "@clerk/nextjs";
+import { useUser } from "@clerk/nextjs";
 
 const Bottombar = () => {
+  const user = useUser();
   const pathName = usePathname();
 
   return (
     <section className="bottombar">
       <div className="bottombar_container">
         {sidebarLinks.map((link) => {
-          const isActive =
-            (pathName.includes(link.route) && pathName.length > 1) ||
-            pathName === link.route;
+          const isActive = (pathName.includes(link.route) && link.route.length > 1) || pathName === link.route;
+          const route = link.route === "/profile" ? `/profile/${user?.user?.id}` : link.route
 
           return (
             <Link
-              href={link.route}
+              href={route}
               key={link.label}
               className={`bottombar_link ${isActive && "bg-primary-500 "}`}
             >

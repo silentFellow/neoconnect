@@ -4,6 +4,7 @@ import connectToDb from "@/lib/mongoose";
 import User from "@/lib/models/user.model";
 import Community from "@/lib/models/community.model"
 import { revalidatePath } from "next/cache";
+import Thread from "../models/thread.model";
 
 interface Params {
   userId: string;
@@ -25,7 +26,7 @@ const updateUser = async ({  userId, username, name, image, bio, path }: Params)
         name,
         image,
         bio,
-        onBoard: true,
+        onboarded: true,
       },
       {  upsert: true }
     )
@@ -51,7 +52,33 @@ const fetchUser = async (userId: string) => {
   }
 }
 
+const fetchUserPosts = async (userId: string) => {
+  try {
+    connectToDb();
+
+    const results = await User.findOne({ id: userId })
+      .populate({
+        path: "threads",
+        model: Thread,
+        populate: {
+          path: "children",
+          model: Thread,
+          populate: {
+            path: "author",
+            model: User,
+            select: "name image id"
+          }
+        }
+      })
+
+    return results;
+  } catch(error: any) {
+    console.log("Failed to fetch user posts: ${error.message}")
+  }
+}
+
 export {
   updateUser,
-  fetchUser
+  fetchUser,
+  fetchUserPosts
 }

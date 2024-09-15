@@ -9,7 +9,7 @@ const CreateThread = async () => {
   if(!user) return null;
 
   const userInfo = await fetchUser(user.id);
-  if(!userInfo?.onBoard) redirect('/onboard');
+  if(!userInfo?.onboarded) redirect('/onboard');
 
   return (
     <>
