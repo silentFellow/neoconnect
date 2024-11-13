@@ -1,11 +1,14 @@
 import Link from "next/link";
 import Image from "next/image";
+import Options from "@/components/cards/ThreadCard/Options";
+import {fetchUser} from "@/lib/actions/user.action";
 
 interface Props {
   id: string;
   currentUserId: string | null;
   parentId: string | null;
   content: string;
+  likedBy: string[];
   author: {
     name: string;
     image: string;
@@ -25,7 +28,7 @@ interface Props {
   isComment?: boolean;
 }
 
-const ThreadCard = ({ id, currentUserId, parentId, author, content, community, createdAt, comments, isComment }: Props) => {
+const ThreadCard = async ({ id, currentUserId, parentId, likedBy, author, content, community, createdAt, comments, isComment }: Props) => {
   return (
     <article className={`flex w-full flex-col rounded-xl ${isComment ? "p-0 xs:p-8" : "bg-dark-2 p-7"}`}>
       <div className="flex items-start justify-between">
@@ -50,24 +53,13 @@ const ThreadCard = ({ id, currentUserId, parentId, author, content, community, c
 
             <p className="mt-2 text-small-regular text-light-2">{content}</p>
 
-            <div className={`${isComment && "mb-10"} mt-5 flex flex-col gap-3`}>
-              <div className="flex flex-row gap-1.5">
-                <Image src="/assets/heart-gray.svg" alt="heart" height={24} width={24} className="cursor-pointer object-contain" />
-                <Link href={`/thread/${id}`}>
-                  <Image src="/assets/reply.svg" alt="reply" height={24} width={24} className="cursor-pointer object-contain" />
-                </Link>
-                <Image src="/assets/repost.svg" alt="repost" height={24} width={24} className="cursor-pointer object-contain" />
-                <Image src="/assets/share.svg" alt="share" height={24} width={24} className="cursor-pointer object-contain" />
-              </div>
-
-              {comments.length > 0 && (
-                <Link href={`/thread/${id}`}>
-                  <p className="text-subtle-medium text-gray-1">
-                    {comments.length} repl{comments.length > 1 ? "ies" : "y"}
-                  </p>
-                </Link>
-              )}
-            </div>
+            <Options
+                threadId={id.toString()}
+                likedBy={likedBy}
+                comments={comments}
+                currentUserId={currentUserId}
+                isComment={isComment}
+            />
           </div>
         </div>
       </div>

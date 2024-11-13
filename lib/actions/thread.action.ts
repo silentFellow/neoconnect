@@ -63,15 +63,17 @@ const fetchThreads = async ({
         populate: {
           path: "author",
           model: User,
-          select: "_id name parentId image"
-        }
-      })
+          select: "_id name parentId image",
+        },
+      });
 
     const posts = await postQuery.exec();
 
     // check if next page is available
-    const totalPosts = await Thread.countDocuments({ parentId: { $in: [null, undefined] } });
-    const hasNext = totalPosts > (skipable + posts.length);
+    const totalPosts = await Thread.countDocuments({
+      parentId: { $in: [null, undefined] },
+    });
+    const hasNext = totalPosts > skipable + posts.length;
 
     return { posts, hasNext };
   } catch (error: any) {
@@ -87,7 +89,7 @@ const fetchThreadById = async (id: string) => {
       .populate({
         path: "author",
         model: User,
-        select: "_id id name image"
+        select: "_id id name image",
       })
       .populate({
         path: "children",
@@ -95,7 +97,7 @@ const fetchThreadById = async (id: string) => {
           {
             path: "author",
             model: User,
-            select: "_id id parentId name image"
+            select: "_id id parentId name image",
           },
           {
             path: "children",
@@ -103,46 +105,80 @@ const fetchThreadById = async (id: string) => {
             populate: {
               path: "author",
               model: User,
-              select: "_id id parentId name image"
-            }
-          }
-        ]
-      }).exec();
+              select: "_id id parentId name image",
+            },
+          },
+        ],
+      })
+      .exec();
 
     return thread;
-  } catch(error: any) {
-    console.log(`Failed to fetch thread: ${error.message}`)
+  } catch (error: any) {
+    console.log(`Failed to fetch thread: ${error.message}`);
     return null;
   }
-}
+};
 
-const addComment = async ({ threadId, currentUserId, text, path }: { threadId: string, currentUserId: string, text: string, path: string }) => {
+const addComment = async ({
+  threadId,
+  currentUserId,
+  text,
+  path,
+}: {
+  threadId: string;
+  currentUserId: string;
+  text: string;
+  path: string;
+}) => {
   try {
     const originalThread = await Thread.findById(threadId);
-    if(!originalThread) {
+    if (!originalThread) {
       throw new Error("Thread not found");
     }
 
     const comment = await Thread.create({
       text,
       author: currentUserId,
-      parentId: threadId
-    })
+      parentId: threadId,
+    });
 
     originalThread.children.push(comment._id);
     await originalThread.save();
 
     revalidatePath(path);
-  } catch(error: any) {
-    console.log(`Failed to add comment: ${error.message}`)
+  } catch (error: any) {
+    console.log(`Failed to add comment: ${error.message}`);
   }
-
-
-}
-
-export {
-  createThread,
-  fetchThreads,
-  fetchThreadById,
-  addComment
 };
+
+const likeThread = async ({
+  threadId,
+  userId,
+  path,
+}: {
+  threadId: string;
+  userId: string;
+  path: string;
+}) => {
+  try {
+    const originalThread = await Thread.findById(threadId);
+    if (!originalThread) {
+      throw new Error("Thread not found");
+    }
+
+    const isLiked = originalThread.likedBy.includes(userId);
+    if(isLiked) {
+      originalThread.likedBy = originalThread.likedBy.filter((id: string) => id !== userId);
+    } else {
+      originalThread.likedBy = originalThread.likedBy.concat(userId);
+    }
+
+    const res = await originalThread.save();
+
+    revalidatePath(path);
+  } catch (error: any) {
+    console.log(`Failed to like thread: ${error.message}`);
+  }
+};
+
+export { createThread, fetchThreads, fetchThreadById, addComment, likeThread };

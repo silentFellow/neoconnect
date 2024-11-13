@@ -25,6 +25,7 @@ const ThreadsTab = async ({ currentUserId, accountId, accountType }: Props) => {
             : { name: thread.author.name, image: thread.author.image, id: thread.author.id }
           }
           createdAt={thread.createdAt}
+          likedBy={thread.likedBy}
           comments={thread.children}
           content={thread.text}
           community={thread.community}

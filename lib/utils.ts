@@ -41,3 +41,22 @@ export function formatThreadCount(count: number): string {
     return `${threadCount} ${threadWord}`;
   }
 }
+
+export const parseSocialNumbers = (number: number): string => {
+  switch (true) {
+    case number < 1000:
+      return number.toString();
+    case number < 1000000:
+      const thousands = number / 1000;
+      return thousands % 1 === 0
+        ? `${thousands}K`
+        : `${thousands.toFixed(1).replace(/\.0$/, "")}K`;
+    case number < 1000000000:
+      const millions = number / 1000000;
+      return millions % 1 === 0
+        ? `${millions}M`
+        : `${millions.toFixed(1).replace(/\.0$/, "")}M`;
+  }
+
+  return "";
+};

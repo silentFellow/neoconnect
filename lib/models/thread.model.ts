@@ -3,29 +3,33 @@ import mongoose from "mongoose";
 const threadSchema = new mongoose.Schema({
   text: {
     type: String,
-    required: true
+    required: true,
   },
   author: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
-    required: true
+    required: true,
   },
   community: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "Community"
+    ref: "Community",
   },
   createdAt: {
     type: Date,
-    ref: Date.now
+    ref: Date.now,
   },
   parentId: String,
+  likedBy: {
+    type: [String],
+    default: [],
+  },
   children: [
     {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Thread"
-    }
-  ]
-})
+      ref: "Thread",
+    },
+  ],
+});
 
 const Thread = mongoose.models.Thread || mongoose.model("Thread", threadSchema);
 

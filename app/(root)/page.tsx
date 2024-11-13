@@ -32,6 +32,7 @@ const page = async () => {
                 createdAt={post.createdAt}
                 comments={post.children}
                 content={post.text}
+                likedBy={post.likedBy}
                 community={post.community}
               />
             ))}
